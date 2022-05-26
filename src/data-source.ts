@@ -1,7 +1,7 @@
 import { DataSource } from "typeorm";
-import { Post } from "./entity/post";
+import { Post } from "./entities/post";
 
-const appDataSource = new DataSource({
+export const appDataSource = new DataSource({
   type: "postgres",
   host: "localhost",
   port: 5433,
