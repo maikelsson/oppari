@@ -1,13 +1,10 @@
-import express, { Express, Request, Response } from "express";
-import dotenv from "dotenv";
 import "reflect-metadata";
 import createConnection from "./data-source";
 import createServer from "./server";
-
-dotenv.config();
+import config from "./config";
 
 async function main() {
-  const PORT = process.env.PORT || 8000;
+  const PORT = config.NODE_PORT;
   const server = createServer();
   await createConnection();
 

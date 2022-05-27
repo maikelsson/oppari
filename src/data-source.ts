@@ -1,5 +1,7 @@
 import { DataSource } from "typeorm";
 import { Post } from "./entities/post";
+import config from "./config";
+import { User } from "./entities/user";
 
 export const appDataSource = new DataSource({
   type: "postgres",
@@ -10,7 +12,7 @@ export const appDataSource = new DataSource({
   database: "oppari",
   synchronize: true,
   logging: true,
-  entities: [Post],
+  entities: [Post, User],
   subscribers: [],
   migrations: [],
 });

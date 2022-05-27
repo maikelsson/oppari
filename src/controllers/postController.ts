@@ -7,11 +7,14 @@ import {
   Put,
   Delete,
   JsonController,
+  UseBefore,
 } from "routing-controllers";
 import { appDataSource } from "../data-source";
 import { Post } from "../entities/post";
+import AuthMiddleware from "../middlewares/auth";
 
 @JsonController("/posts")
+@UseBefore(AuthMiddleware)
 export class PostController {
   private postRepository = appDataSource.getRepository(Post);
   @Get()
