@@ -9,24 +9,25 @@ import {
   JsonController,
   UseBefore,
 } from "routing-controllers";
-import { appDataSource } from "../data-source";
-import { User } from "../entities/user";
 import { createToken } from "../services/tokenService";
 import { hash } from "../services/hashService";
+import { UserRepository } from "../repositories/userRepository";
+import { Repository } from "typeorm";
+import { Service } from "typedi";
 
-interface UserInput {
+export interface UserInput {
   username: string;
   password: string;
 }
 
 @JsonController("/auth")
+@Service()
 export class AuthController {
-  private userRepository = appDataSource.getRepository(User);
-
+  constructor(private userRepository: UserRepository) {}
   // TODO : Move to usercontroller
   @Get("/all")
   async getAll() {
-    const users = await this.userRepository.find();
+    const users = await this.userRepository.findAll();
     return { users };
   }
 
@@ -34,11 +35,10 @@ export class AuthController {
   async register(@Body() payload: UserInput) {
     try {
       const hashedPassword = await hash(payload.password);
-      const user = await this.userRepository.create({
+      await this.userRepository.insert({
         username: payload.username,
         password: hashedPassword,
       });
-      await this.userRepository.save(user);
       return { message: "Register success" };
     } catch (error: any) {
       if (error.code === "23505") {
@@ -52,25 +52,25 @@ export class AuthController {
     }
   }
 
-  @Post("/login")
-  async login(@Body() payload: UserInput) {
-    try {
-      const user = await this.userRepository.findOneBy({
-        username: payload.username,
-      });
-      if (!user) {
-        return { message: "invalid credentials" };
-      }
-      if (user?.password !== payload.password) {
-        return { message: "invalid credentials" };
-      }
+  // @Post("/login")
+  // async login(@Body() payload: UserInput) {
+  //   try {
+  //     const user = await this.userRepository.findOneBy({
+  //       username: payload.username,
+  //     });
+  //     if (!user) {
+  //       return { message: "invalid credentials" };
+  //     }
+  //     if (user?.password !== payload.password) {
+  //       return { message: "invalid credentials" };
+  //     }
 
-      const token = createToken(user.id);
-      return { token };
-    } catch (error) {
-      return {
-        error,
-      };
-    }
-  }
+  //     const token = createToken(user.id);
+  //     return { token };
+  //   } catch (error) {
+  //     return {
+  //       error,
+  //     };
+  //   }
+  // }
 }

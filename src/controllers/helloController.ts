@@ -1,13 +1,4 @@
-import {
-  Controller,
-  Param,
-  Body,
-  Get,
-  Post,
-  Put,
-  Delete,
-  JsonController,
-} from "routing-controllers";
+import { Controller, Get } from "routing-controllers";
 
 @Controller()
 export class HelloController {

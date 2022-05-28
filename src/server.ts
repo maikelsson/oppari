@@ -1,5 +1,8 @@
-import { createExpressServer } from "routing-controllers";
+import { createExpressServer, useContainer } from "routing-controllers";
+import { Container } from "typedi";
 import path from "path";
+
+useContainer(Container);
 
 export default function createServer() {
   return createExpressServer({
