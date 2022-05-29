@@ -1,19 +1,9 @@
-import {
-  Controller,
-  Param,
-  Body,
-  Get,
-  Post,
-  Put,
-  Delete,
-  JsonController,
-  UseBefore,
-} from "routing-controllers";
-import { createToken } from "../services/tokenService";
-import { hash } from "../services/hashService";
-import { UserRepository } from "../repositories/userRepository";
-import { Repository } from "typeorm";
+import { NextFunction } from "express";
+import { Body, Get, JsonController, Post } from "routing-controllers";
 import { Service } from "typedi";
+import { UserRepository } from "../repositories/userRepository";
+import { hash, verify } from "../services/hashService";
+import { createToken } from "../services/tokenService";
 
 export interface UserInput {
   username: string;
@@ -40,37 +30,30 @@ export class AuthController {
         password: hashedPassword,
       });
       return { message: "Register success" };
-    } catch (error: any) {
-      if (error.code === "23505") {
-        return {
-          error: "Username is already taken",
-        };
-      }
+    } catch (error: unknown) {
       return {
         error: "Register failure",
       };
     }
   }
 
-  // @Post("/login")
-  // async login(@Body() payload: UserInput) {
-  //   try {
-  //     const user = await this.userRepository.findOneBy({
-  //       username: payload.username,
-  //     });
-  //     if (!user) {
-  //       return { message: "invalid credentials" };
-  //     }
-  //     if (user?.password !== payload.password) {
-  //       return { message: "invalid credentials" };
-  //     }
-
-  //     const token = createToken(user.id);
-  //     return { token };
-  //   } catch (error) {
-  //     return {
-  //       error,
-  //     };
-  //   }
-  // }
+  @Post("/login")
+  async login(@Body() payload: UserInput) {
+    try {
+      const user = await this.userRepository.findByName(payload.username);
+      if (!user) {
+        return { message: "invalid credentials" };
+      }
+      const isValidPassword = await verify(payload.password, user.password);
+      if (!isValidPassword) {
+        return { message: "invalid credentials" };
+      }
+      const token = createToken(user.id);
+      return { token };
+    } catch (error) {
+      return {
+        error,
+      };
+    }
+  }
 }

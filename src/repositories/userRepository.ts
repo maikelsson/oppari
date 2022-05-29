@@ -1,6 +1,6 @@
 import { appDataSource } from "../data-source";
 import { User } from "../entities/user";
-import { Repository } from "typeorm";
+import { FindOptionsWhere, QueryFailedError, Repository } from "typeorm";
 import { Service } from "typedi";
 import { UserInput } from "../controllers/authController";
 
@@ -16,5 +16,10 @@ export class UserRepository {
   async insert(input: UserInput): Promise<void> {
     const result = this.repository.create(input);
     await this.repository.save(result);
+  }
+
+  async findByName(username: string): Promise<User | null> {
+    const user = await this.repository.findOneBy({ username });
+    return user;
   }
 }

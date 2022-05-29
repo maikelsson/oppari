@@ -1,15 +1,28 @@
-import { hash } from "../../../src/services/hashService";
+import { hash, verify } from "../../../src/services/hashService";
 import bcrypt from "bcryptjs";
 
-const mockBcrypt = jest
+const mockHash = jest
   .spyOn(bcrypt, "hash")
   .mockImplementation(() => Promise.resolve("$2a$12$"));
 
-describe("hashService.ts", () => {
-  test("should call hash fn() and hash plaintext password", async () => {
-    const sut = await hash("p4ssw0rd");
+const mockCompare = jest
+  .spyOn(bcrypt, "compare")
+  .mockImplementation(() => Promise.resolve(true));
 
-    expect(sut.startsWith("$2a$12$")).toBeTruthy();
-    expect(mockBcrypt).toHaveBeenCalledTimes(1);
+describe("hashService.ts", () => {
+  test("should hash a plaintext password", async () => {
+    const result = await hash("p4ssw0rd");
+
+    expect(result.startsWith("$2a$12$")).toBeTruthy();
+    expect(mockHash).toHaveBeenCalledTimes(1);
+    expect(mockHash).toBeCalledWith("p4ssw0rd", 12);
+  });
+
+  test("should verify hashed password and plain password", async () => {
+    const result = await verify("password", "$2a$12$");
+
+    expect(result).toBeTruthy();
+    expect(mockCompare).toBeCalledTimes(1);
+    expect(mockCompare).toBeCalledWith("password", "$2a$12$");
   });
 });
