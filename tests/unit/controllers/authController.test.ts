@@ -28,17 +28,19 @@ jest.spyOn(jwt, "sign").mockImplementation(() => "m0ck.JwtT0k3n.53cr3t");
 
 import bcrypt from "bcryptjs";
 jest.spyOn(bcrypt, "hash").mockImplementation(() => Promise.resolve("$2a$12$"));
-//jest.spyOn(bcrypt, "compare").mockImplementation(() => Promise.resolve(true));
+
 describe("authController.ts", () => {
   const sut = new AuthController(mockUserRepository);
   describe("initialization", () => {
     test("AuthController should be defined", () => {
       expect(sut).toBeDefined();
     });
+
     test("UserRepository should be defined", () => {
       expect(mockUserRepository).toBeDefined();
     });
   });
+
   describe("getAll", () => {
     test("should return list of users", async () => {
       const result = await sut.getAll();
@@ -47,6 +49,7 @@ describe("authController.ts", () => {
       expect(mockUserRepository.findAll).toBeCalledTimes(1);
     });
   });
+
   describe("register", () => {
     test("should register user with valid input", async () => {
       mockUserRepository.insert = jest.fn().mockImplementation(() => {
@@ -78,6 +81,7 @@ describe("authController.ts", () => {
 
       expect(result.token).toEqual("m0ck.JwtT0k3n.53cr3t");
     });
+
     test("should not create jwt token with wrong password", async () => {
       jest.spyOn(hashService, "verify").mockReturnValue(Promise.resolve(false));
 
