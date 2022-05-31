@@ -9,12 +9,14 @@ import {
   JsonController,
   UseBefore,
 } from "routing-controllers";
+import { Service } from "typedi";
 import { appDataSource } from "../data-source";
 import { Post } from "../entities/post";
 import AuthMiddleware from "../middlewares/auth";
 
 @JsonController("/posts")
 @UseBefore(AuthMiddleware)
+@Service()
 export class PostController {
   private postRepository = appDataSource.getRepository(Post);
   @Get()

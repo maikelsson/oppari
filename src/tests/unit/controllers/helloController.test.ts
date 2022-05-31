@@ -1,4 +1,4 @@
-import { HelloController } from "../../../src/controllers/helloController";
+import { HelloController } from "../../../controllers/helloController";
 
 describe("helloController.ts", () => {
   test("getAll should return Hello World!", () => {

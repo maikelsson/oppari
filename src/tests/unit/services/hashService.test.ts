@@ -1,4 +1,4 @@
-import { hash, verify } from "../../../src/services/hashService";
+import { hash, verify } from "../../../services/hashService";
 import bcrypt from "bcryptjs";
 
 const mockHash = jest

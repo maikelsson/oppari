@@ -1,7 +1,7 @@
-import { AuthController } from "../../../src/controllers/authController";
-import { UserRepository } from "../../../src/repositories/userRepository";
-import { User } from "../../../src/entities/user";
-import * as hashService from "../../../src/services/hashService";
+import { AuthController } from "../../../controllers/authController";
+import { UserRepository } from "../../../repositories/userRepository";
+import { User } from "../../../entities/user";
+import * as hashService from "../../../services/hashService";
 
 const mockUserRepository = new (<new () => UserRepository>(
   UserRepository
@@ -62,12 +62,14 @@ describe("authController.ts", () => {
     });
 
     test("should throw error when username already exists", async () => {
+      // Arrange
       mockUserRepository.insert = jest.fn().mockImplementation(() => {
         throw new Error("Register failure");
       });
-
+      const sut = new AuthController(mockUserRepository);
+      // Act
       const result = await sut.register({ username: "mock", password: "mock" });
-
+      // Assert
       expect(result).toEqual({ error: "Register failure" });
     });
   });

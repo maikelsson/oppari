@@ -1,4 +1,4 @@
-import { createToken } from "../../../src/services/tokenService";
+import { createToken } from "../../../services/tokenService";
 import jwt from "jsonwebtoken";
 
 const mockSign = jest
